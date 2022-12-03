@@ -6,9 +6,7 @@ import com.example.springbootmongodb.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +23,13 @@ public class UserResource {
         List<User> users = service.findAll();
         List<UserDTO> usersDTO = users.stream().map(user -> new UserDTO(user)).collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK).body(usersDTO);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable String id) {
+        User user = service.findById(id);
+        UserDTO userDTO = new UserDTO(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
 }
