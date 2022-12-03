@@ -4,10 +4,13 @@ import com.example.springbootmongodb.domain.User;
 import com.example.springbootmongodb.dto.UserDTO;
 import com.example.springbootmongodb.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,20 @@ public class UserResource {
         User user = service.findById(id);
         UserDTO userDTO = new UserDTO(user);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> insert(@RequestBody UserDTO userDTO) {
+
+        User user = service.fromDTO(userDTO);
+        user = service.insert(user);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Location", uri.toString());
+
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(null);
+        // return ResponseEntity.created(uri).build();
     }
 
 }
