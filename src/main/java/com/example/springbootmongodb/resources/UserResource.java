@@ -1,5 +1,6 @@
 package com.example.springbootmongodb.resources;
 
+import com.example.springbootmongodb.domain.Post;
 import com.example.springbootmongodb.domain.User;
 import com.example.springbootmongodb.dto.UserDTO;
 import com.example.springbootmongodb.services.UserService;
@@ -63,6 +64,12 @@ public class UserResource {
     public ResponseEntity<Void> delete(@PathVariable String id) {
         service.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/posts")
+    public ResponseEntity<List<Post>> findPosts(@PathVariable String id) {
+        User user = service.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(user.getPosts());
     }
 
 }
